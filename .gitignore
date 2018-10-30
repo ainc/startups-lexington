@@ -1,0 +1,10 @@
+.DS_Store
+
+*.sass-cache
+
+
+
+// vscode
+.vscode/*
+!.vscode/settings.json
+
