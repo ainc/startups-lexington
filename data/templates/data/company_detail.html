@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ company.name }}</h1>
+    <p>Added:  {{ company.date_added | date:"M, y" }}</p>
+    
+    <hr>
+    <h4>Team</h4>
+    <ul>
+        {% for founder in founders %}
+            <li>{{ founder.name }} - {{ founder.title }}</li>
+        {% endfor %}
+    </ul>
+    
+    <hr>
+    <h4>Website</h4>
+    <p><a href="{{ company.website }}">{{ company.website }}</a></p>
+    <p>Contact: <a href="mailto:{{ company.email_address }}">{{ company.email_address }}</a></p>
+
+    <hr>
+    <h4>Stage {{ company.stage }}</h4>
+    <p>{{ company.stage.description }}</p>
+
+    <hr>
+    <h4>Investor</h4>
+    <p>{{ company.investor }}</p>
+    </div>
+    
+
+{% endblock %}

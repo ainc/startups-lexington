@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Companies</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Company</th>
+                <th scope="col">Founder</th>
+                <th scope="col">Email Address</th>
+                <th scope="col">Stage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in companies %}
+            <tr>
+                <th scope="row"><a href="{% url 'company-detail' company.pk %}">{{ company.name }}</a></th>
+                <td>{{ company.founder }}</td>
+                <td><a href="mailto:{{ company.email_address }}">{{ company.email_address }}</a></td>
+                <td>{{ company.stage }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

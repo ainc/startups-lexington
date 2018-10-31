@@ -2,7 +2,8 @@
 
 *.sass-cache
 
-
+// file to keep db info
+startup/settings_secret.py
 
 // vscode
 .vscode/*
