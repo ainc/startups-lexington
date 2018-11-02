@@ -34,13 +34,7 @@ class Stage(models.Model):
             return self.title.split()[1]
         return self.title
 
-"""
-This does not work because 
-1. When inheriting stage, this creates multiple stage instances in the admin dashboard.
-2. How do we decide what "stage" a report is if a report itself is a stage
-"""
-
-class CompanyReport(Stage):
+class CompanyReport(models.Model):
     company = models.ForeignKey('Company', on_delete=models.CASCADE)
     investor = models.ForeignKey('Investor', on_delete=models.CASCADE, blank=True, null=True)
     date_updated = models.DateField('Date updated')
