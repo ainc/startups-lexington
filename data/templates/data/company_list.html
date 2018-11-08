@@ -12,14 +12,25 @@
             </tr>
         </thead>
         <tbody>
-            {% for company in companies %}
+            {% for company, stage in company_list %}
             <tr>
                 <th scope="row"><a href="{% url 'company-detail' company.pk %}">{{ company.name }}</a></th>
                 <td>{{ company.founder }}</td>
                 <td><a href="mailto:{{ company.email_address }}">{{ company.email_address }}</a></td>
-                <td>{{ company.stage }}</td>
+                <td>{{ stage }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    
+    <div id="container" data-url="{% url 'chart_data' %}"></div>
+    <script>
+        $.ajax({
+          url: $("#container").attr("data-url"),
+          dataType: 'json',
+          success: function (data) {
+            Highcharts.chart("container", data);
+          }
+        });
+      </script>
 {% endblock %}

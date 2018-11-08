@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 <div class="container">
     <h1>{{ company.name }}</h1>
-    <p>Added:  {{ company.date_added | date:"M, y" }}</p>
+    <p>Added:  {{ company.date_created | date:"M, Y" }}</p>
     
+    {% if founders %}
     <hr>
     <h4>Team</h4>
     <ul>
@@ -12,20 +14,28 @@
             <li>{{ founder.name }} - {{ founder.title }}</li>
         {% endfor %}
     </ul>
-    
+    {% endif %}
+
+    {% if company.website %}
     <hr>
     <h4>Website</h4>
     <p><a href="{{ company.website }}">{{ company.website }}</a></p>
+    {% endif %}
+    {% if company.email_address %}
     <p>Contact: <a href="mailto:{{ company.email_address }}">{{ company.email_address }}</a></p>
-
+    {% endif %}
+    
     <hr>
-    <h4>Stage {{ company.stage }}</h4>
+    <h4>{{ current_stage.stage.title }}</h4>
+
+    <ul>
+        {% for stage in stages %}
+            <li>{{ stage.stage }} - Reported on: {{stage.date_updated }}</li>
+        {% endfor %}
+    </ul>
     <p>{{ company.stage.description }}</p>
 
-    <hr>
-    <h4>Investor</h4>
-    <p>{{ company.investor }}</p>
     </div>
-    
+
 
 {% endblock %}
