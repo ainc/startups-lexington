@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-import datetime
+from datetime import datetime
 import Levenshtein
 
 # change true/false to yes/no for forms
@@ -20,7 +20,7 @@ class Company(models.Model):
         return self.name
 
 class CommonStage(models.Model):
-    title = models.CharField(max_length=200, default=str(datetime.date.today()) )
+    title = models.CharField(max_length=200, default=str(datetime.now()) )
     funding = models.IntegerField('Funding', default=0, blank=True, null=True)
     product_stage = models.ForeignKey('ProductStage', on_delete=models.CASCADE, blank=True, null=True)
     has_customers = models.BooleanField(choices=BOOL_CHOICES, blank=True, null=True)
@@ -40,14 +40,22 @@ class MasterStage(CommonStage):
 
     def get_stage_number(self):
         if len(self.title.split()) > 1:
-            return (self.title.split()[1])
+            return (int(self.title.split()[1]))
         return 0
 
 class CompanyStageReport(CommonStage):
     company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='company_stage_report')
     investor = models.ForeignKey('Investor', on_delete=models.CASCADE, blank=True, null=True)
-    date_updated = models.DateField('Date updated', default=datetime.date.today())
+    date_updated = models.DateTimeField('Date updated', default=datetime.now)
     stage = models.ForeignKey('MasterStage', on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.stage = self.calcStage()
+        self.title = self.title
+        return super(CompanyStageReport, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.company.name + " - " + self.title + " - " + self.stage.title
 
     """
     Calculate the stage of a company based on MasterStage table values.
@@ -118,14 +126,6 @@ class CompanyStageReport(CommonStage):
         else:
             self.stage = MasterStage.objects.get(title="Stage 1")
         return self.stage
-
-    def save(self, *args, **kwargs):
-        self.stage = self.calcStage()
-        self.title = self.title
-        return super(CompanyStageReport, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.company.name + " - " + self.title + " - " + self.stage.title
         
 class Founder(models.Model):
     name = models.CharField(max_length=200)
