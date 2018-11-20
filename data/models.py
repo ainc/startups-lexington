@@ -20,7 +20,7 @@ class Company(models.Model):
         return self.name
 
 class CommonStage(models.Model):
-    title = models.CharField(max_length=200, default=str(datetime.now()) )
+    title = models.CharField(max_length=200, blank=True)
     funding = models.IntegerField('Funding', default=0, blank=True, null=True)
     product_stage = models.ForeignKey('ProductStage', on_delete=models.CASCADE, blank=True, null=True)
     has_customers = models.BooleanField(choices=BOOL_CHOICES, blank=True, null=True)
@@ -31,7 +31,9 @@ class CommonStage(models.Model):
         abstract = True
 
 class MasterStage(CommonStage):
+    title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    value = models.IntegerField(default=0)
 
     def __str__(self):
         if len(self.title.split()) > 1:
@@ -51,11 +53,10 @@ class CompanyStageReport(CommonStage):
 
     def save(self, *args, **kwargs):
         self.stage = self.calcStage()
-        self.title = self.title
         return super(CompanyStageReport, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.company.name + " - " + self.title + " - " + self.stage.title
+        return str(self.company.name)
 
     """
     Calculate the stage of a company based on MasterStage table values.
@@ -64,7 +65,7 @@ class CompanyStageReport(CommonStage):
     3. Iterate through and compare values, add 1 for each matching pair. Or add 1 if value is greater for that stage
     """
     def calcStage(self):
-        stages = MasterStage.objects.all()
+        stages = MasterStage.objects.all().order_by("title")
         comp_stage = 0
 
         # Create matrix list that pulls from MasterStage models
@@ -90,8 +91,6 @@ class CompanyStageReport(CommonStage):
         # Implement similarity model below
         weight_list = []
         for row in range(len(master_stage_matrix)):
-            print(master_stage_matrix[row])
-            print(curr_stage_list)
             weight_list.append(0)
             for i in range(len(master_stage_matrix[row])):
                 # bools check
@@ -106,26 +105,17 @@ class CompanyStageReport(CommonStage):
                 else:
                     if master_stage_matrix[row][i] <= curr_stage_list[i]:
                         weight_list[row] += 1
+
         print(weight_list)
         max_match = max(weight_list)
+        print(max_match)
         stage_match = [l for l, j in enumerate(weight_list) if j == max_match]
         print(stage_match)
-        if len(stage_match) > 1:
-            best_match = stage_match[-1]
-        else:
-            best_match = stage_match[0]
+        # Get the smaller match of the two
+        best_match = min(stage_match)
+        print(best_match)
 
-        if best_match == 4:
-            self.stage = MasterStage.objects.get(title="Stage 5")
-        elif best_match == 3:
-            self.stage = MasterStage.objects.get(title="Stage 4")
-        elif best_match == 2:
-            self.stage = MasterStage.objects.get(title="Stage 3")
-        elif best_match == 1:
-            self.stage = MasterStage.objects.get(title="Stage 2")
-        else:
-            self.stage = MasterStage.objects.get(title="Stage 1")
-        return self.stage
+        return MasterStage.objects.get(title=stages[best_match].title)
         
 class Founder(models.Model):
     name = models.CharField(max_length=200)

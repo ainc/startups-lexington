@@ -30,7 +30,12 @@ class CompanyStageReportAdmin(admin.ModelAdmin):
     )
     readonly_fields = ('stage', )
     exclude = ('title', 'description')
+    ordering = ('-date_updated',)
 
+    list_display = ('__str__', 'date_updated', 'stage')
+    list_display_links = ('__str__', 'stage', )
+    list_filter = ('date_updated', 'stage', )
+ 
 
 
 admin.site.register(Company, CompanyAdmin)
