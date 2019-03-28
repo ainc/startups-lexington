@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from datetime import datetime
-import Levenshtein
 
 # change true/false to yes/no for forms
 BOOL_CHOICES = ((True, 'Yes'), (False, 'No'))
@@ -21,10 +20,10 @@ class Company(models.Model):
 
 class CommonStage(models.Model):
     title = models.CharField(max_length=200, blank=True)
-    funding = models.IntegerField('Funding', default=0, blank=True, null=True)
+    funding = models.IntegerField('Funding to Date', default=0, blank=True, null=True)
     product_stage = models.ForeignKey('ProductStage', on_delete=models.CASCADE, blank=True, null=True)
     has_customers = models.BooleanField(choices=BOOL_CHOICES, blank=True, null=True)
-    revenue = models.IntegerField('Revenue', default=0, blank=True, null=True)
+    revenue = models.IntegerField('Annual Revenue', default=0, blank=True, null=True)
     fulltime_employees = models.IntegerField('Fulltime Employees', default=0, blank=True, null=True)
 
     class Meta:

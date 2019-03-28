@@ -11,6 +11,11 @@ class CompanyStageReportInline(admin.TabularInline):
     extra = 1
     exclude = ['title', 'description', 'stage']
 
+    class Media:
+        js = (
+            'data/formset_handlers.js',
+        )
+
 class CompanyAdmin(admin.ModelAdmin):
     # fieldsets = [
     #     (None,       {'fields': ['name', 'website', 'email_address', 'investor', 'stage']}),
@@ -35,6 +40,11 @@ class CompanyStageReportAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'date_updated', 'stage')
     list_display_links = ('__str__', 'stage', )
     list_filter = ('date_updated', 'stage', )
+
+    class Media:
+        js = (
+            '/formset_handlers.js',
+        )
  
 
 
